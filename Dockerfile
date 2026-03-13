@@ -4,18 +4,15 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY . .
 
-ARG BUILD_MODE=production
-RUN npm run build -- --mode ${BUILD_MODE}
+RUN npm run build
 
-# Production stage
-FROM nginx:alpine AS production-stage
+FROM nginx:alpine
 
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
-
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 EXPOSE 80
